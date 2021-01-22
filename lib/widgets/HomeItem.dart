@@ -4,10 +4,12 @@ class HomeItem extends StatelessWidget {
   final title;
   final subtitle;
   final img;
+  final Function onpressed;
   const HomeItem({
     @required this.title,
     @required this.subtitle,
     @required this.img,
+    @required this.onpressed,
   });
 
   @override
@@ -55,7 +57,7 @@ class HomeItem extends StatelessWidget {
             IconButton(
               iconSize: 40,
               icon: Icon(Icons.arrow_right),
-              onPressed: () {},
+              onPressed: onpressed,
             )
           ],
         ));

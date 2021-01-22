@@ -1,3 +1,5 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../widgets/TheAppBar.dart';
@@ -34,15 +36,15 @@ class HomeScreen extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Column(
-              children: [
-                HomeItem(
-                  title: 'Covid Test',
-                  subtitle:
-                      'check if you have Covid-19 and \nthedegree of infection',
-                  img: SvgPicture.asset('assets/images/undraw_Choose_bwbs.svg'),
-                ),
-              ],
+            HomeItem(
+              title: 'Covid Test',
+              subtitle:
+                  'check if you have Covid-19 and \nthedegree of infection',
+              img: SvgPicture.asset('assets/images/undraw_Choose_bwbs.svg'),
+              onpressed: () async {
+                final res = await http.get('http://10.0.2.2:5000/video/5');
+                print(json.decode(res.body));
+              },
             )
           ],
         ),

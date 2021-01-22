@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 final themeColor = Color(0xfff5a623);
-final primaryColor = Color(0xff203152);
-final greyColor = Color(0xffaeaeae);
+final primaryColor = Color.fromRGBO(84, 112, 237, 1);
+final greyColor = Color.fromRGBO(137, 137, 137, 1);
 final greyColor2 = Color(0xffE8E8E8);
 
 // Colors
@@ -20,7 +20,7 @@ const kHeadingextStyle = TextStyle(
 const kSubheadingextStyle = TextStyle(
   fontSize: 24,
   color: Color(0xFF61688B),
-  height: 2,
+  height: 1.5,
 );
 
 const kTitleTextStyle = TextStyle(
