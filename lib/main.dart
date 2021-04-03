@@ -1,5 +1,6 @@
 import 'package:GradProject/providers/CovidTest.dart';
 import 'package:GradProject/providers/hospitals.dart';
+import 'package:GradProject/screens/ContactDoctorScreen.dart';
 import 'package:GradProject/screens/ResultScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Health Care',
         theme: ThemeData(
+          primaryColor: primaryColor,
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
@@ -38,6 +40,8 @@ class MyApp extends StatelessWidget {
         routes: {
           'covid-test-screen': (ctx) => CovidTestScreen(),
           'get-hospital-screen': (ctx) => GetHospitalScreen(),
+          'test-result-screen': (ctx) => TestResultScreen(),
+          'contact-doctor-screen': (ctx) => ContactDoctorScreen()
         },
       ),
     );

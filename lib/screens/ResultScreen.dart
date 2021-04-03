@@ -1,5 +1,6 @@
 import 'package:GradProject/constants.dart';
 import 'package:GradProject/widgets/MyAppBar.dart';
+import 'package:firebase_core/firebase_core.dart';
 import "package:flutter/material.dart";
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:provider/provider.dart';
@@ -15,23 +16,28 @@ class _TestResultScreenState extends State<TestResultScreen> {
   static var chartDisplay;
   var percent;
   String infectionDegree = "no infection";
-  bool needHospital = true;
+  bool needHospital = false;
   bool contactDoctor = false;
+  bool _isLoading = false;
 
   void setInfectionDegree(per) {
-    if (per < 25) {
+    if (per < 50) {
       infectionDegree = 'Mild Infecion';
-    } else if (per >= 25 && per < 50) {
+    } else if (per >= 50 && per < 60) {
       infectionDegree = 'Moderate Infection';
-    } else if (per >= 50 && per < 75) {
-      infectionDegree = 'severe Infection';
+      contactDoctor = true;
     } else {
-      infectionDegree = 'Critical Infection';
+      infectionDegree = 'severe Infection';
+      needHospital = true;
     }
+    // else {
+    //   infectionDegree = 'Critical Infection';
+    // }
   }
 
   @override
   void initState() {
+    Firebase.initializeApp();
     Future.delayed(Duration.zero, () {
       final res = Provider.of<CovidTest>(context, listen: false).testResult;
       final restOfRes = 100 - res;
@@ -55,7 +61,7 @@ class _TestResultScreenState extends State<TestResultScreen> {
       chartDisplay = charts.PieChart(series,
           animationDuration: Duration(milliseconds: 1000),
           defaultRenderer: new charts.ArcRendererConfig(
-              arcWidth: 40,
+              arcWidth: 30,
               startAngle: 4 / 5 * 22 / 7,
               arcLength: 7 / 5 * 22 / 7));
     });
@@ -95,65 +101,130 @@ class _TestResultScreenState extends State<TestResultScreen> {
             SizedBox(
               height: 10,
             ),
-            Text(
-              needHospital ? 'You need to move to hospital' : "",
-              style: TextStyle(
-                  fontSize: 25,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromRGBO(228, 18, 29, 1)),
+            Container(
+              margin: EdgeInsets.only(left: 20),
+              child: Text(
+                contactDoctor
+                    ? 'you need to communicate with doctor'
+                    : (needHospital ? 'You need to move to hospital' : ""),
+                style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(228, 18, 29, 1)),
+              ),
             ),
             SizedBox(
               height: 40,
             ),
-            Container(
-              margin: EdgeInsets.only(right: 10),
-              alignment: Alignment.bottomRight,
-              child: needHospital
-                  ? RaisedButton(
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('get-hospital-screen');
-                      },
-                      textColor: Colors.white,
-                      padding: const EdgeInsets.all(0.0),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: <Color>[
-                              Color(0xFF0D47A1),
-                              Color(0xFF1976D2),
-                              Color(0xFF42A5F5),
-                            ],
-                          ),
-                        ),
-                        padding: const EdgeInsets.all(10.0),
-                        //margin: EdgeInsets.only(right: 10),
-                        child: const Text('Get Hospital',
-                            style: TextStyle(fontSize: 20)),
-                      ),
-                    )
+            _isLoading
+                ? CircularProgressIndicator()
+                : Container(
+                    margin: EdgeInsets.only(right: 10),
+                    alignment: Alignment.bottomRight,
+                    child: needHospital
+                        ? RaisedButton(
+                            onPressed: () async {
+                              try {} catch (e) {}
+                            },
+                            textColor: Colors.white,
+                            padding: const EdgeInsets.all(0.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: <Color>[
+                                    Color(0xFF0D47A1),
+                                    Color(0xFF1976D2),
+                                    Color(0xFF42A5F5),
+                                  ],
+                                ),
+                              ),
+                              padding: const EdgeInsets.all(10.0),
+                              //margin: EdgeInsets.only(right: 10),
+                              child: const Text('Get Hospital',
+                                  style: TextStyle(fontSize: 20)),
+                            ),
+                          )
 
-                  // Container(
-                  //     margin: EdgeInsets.only(right: 10),
-                  //     decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(10),
-                  //         border: Border.all()),
-                  //     child: FlatButton(
-                  //       child: Text('Get Hospital',
-                  //           style: TextStyle(
-                  //               fontSize: 18,
-                  //               fontWeight: FontWeight.bold,
-                  //               color: primaryColor)),
-                  //       onPressed: () {},
-                  //     ),
-                  //   )
-                  : Container(
-                      child: Text('Contact Doctor',
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: primaryColor)),
-                    ),
-            )
+                        // Container(
+                        //     margin: EdgeInsets.only(right: 10),
+                        //     decoration: BoxDecoration(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //         border: Border.all()),
+                        //     child: FlatButton(
+                        //       child: Text('Get Hospital',
+                        //           style: TextStyle(
+                        //               fontSize: 18,
+                        //               fontWeight: FontWeight.bold,
+                        //               color: primaryColor)),
+                        //       onPressed: () {},
+                        //     ),
+                        //   )
+                        : contactDoctor
+                            ? RaisedButton(
+                                onPressed: () async {
+                                  final snackBar = SnackBar(
+                                    content: Text(
+                                        'error! check network and try again'),
+                                  );
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  try {
+                                    await Provider.of<CovidTest>(context,
+                                            listen: false)
+                                        .addToWaiting();
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                    Navigator.of(context)
+                                        .pushNamed('contact-doctor-screen');
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
+                                  }
+                                },
+                                textColor: Colors.white,
+                                padding: const EdgeInsets.all(0.0),
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: <Color>[
+                                        Color(0xFF0D47A1),
+                                        Color(0xFF1976D2),
+                                        Color(0xFF42A5F5),
+                                      ],
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.all(10.0),
+                                  //margin: EdgeInsets.only(right: 10),
+                                  child: const Text('contact doctor',
+                                      style: TextStyle(fontSize: 20)),
+                                ),
+                              )
+                            : (needHospital
+                                ? RaisedButton(
+                                    textColor: Colors.white,
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: <Color>[
+                                            Color(0xFF0D47A1),
+                                            Color(0xFF1976D2),
+                                            Color(0xFF42A5F5),
+                                          ],
+                                        ),
+                                      ),
+                                      padding: const EdgeInsets.all(10.0),
+                                      //margin: EdgeInsets.only(right: 10),
+                                      child: const Text('Get Hospital',
+                                          style: TextStyle(fontSize: 20)),
+                                    ),
+                                    onPressed: () => Navigator.of(context)
+                                        .pushNamed('get-hospital-screen'))
+                                : Container()))
           ],
         ),
       ),
