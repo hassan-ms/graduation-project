@@ -1,14 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
 
 class MyAppBar extends StatelessWidget {
-  const MyAppBar({
+  final db = FirebaseFirestore.instance;
+  MyAppBar({
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Firebase.initializeApp();
     return Container(
+      height: 70,
       decoration: BoxDecoration(
         color: primaryColor,
         boxShadow: [
@@ -33,12 +38,56 @@ class MyAppBar extends StatelessWidget {
             'Health Care',
             style: kHeadingextStyle.copyWith(color: Colors.white, fontSize: 20),
           ),
-          IconButton(
-              icon: Image.asset(
-                'assets/images/125745-200.png',
-                color: Colors.white,
-              ),
-              onPressed: () {}),
+          // StreamBuilder(
+          //     stream: db
+          //         .collection('notifications')
+          //         .doc('4CaJ8qnZ0KdUyXPlwf7w5S6bOyY2')
+          //         .snapshots(),
+          //     builder: (context, snapshot) {
+          //       DocumentSnapshot ss = snapshot.data;
+          //       if (ss.data().isEmpty) {
+          //         return Icon(
+          //           Icons.notifications_none_outlined,
+          //           size: 35,
+          //           color: Colors.white,
+          //         );
+          //       }
+          //       return PopupMenuButton(
+          //         child: Stack(
+          //           children: [
+          //             Icon(
+          //               Icons.notifications_none_outlined,
+          //               size: 35,
+          //               color: Colors.white,
+          //             ),
+          //             Container(
+          //               decoration: BoxDecoration(
+          //                   color: Colors.grey,
+          //                   borderRadius: BorderRadius.circular(6)),
+          //               // margin: EdgeInsets.only(top: 5, left: 10),
+          //               child: Text(ss.data().length.toString(),
+          //                   style: TextStyle(color: primaryColor, fontSize: 20),
+          //                   textAlign: TextAlign.start),
+          //             ),
+          //           ],
+          //         ),
+          //         itemBuilder: (_) => ss.data().entries.map((ent) {
+          //           return PopupMenuItem(
+          //             child: Text(ent.value),
+          //             value: ent.key,
+          //           );
+          //         }).toList(),
+          //         onSelected: (value) async {
+          //           // Navigator.of(context).pushNamed(value);
+          //           // DocumentSnapshot snapsht;
+          //           db
+          //               .collection('notifications')
+          //               .doc('4CaJ8qnZ0KdUyXPlwf7w5S6bOyY2')
+          //               .update({value: FieldValue.delete()});
+          //           Navigator.of(context).pushNamed(value);
+          //         },
+          //       );
+          //     }),
         ],
       ),
     );

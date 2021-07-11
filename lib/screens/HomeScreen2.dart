@@ -1,5 +1,6 @@
+import 'package:GradProject/providers/AwarnessProvider.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 import '../constants.dart';
 import '../widgets/MyAppBar.dart';
 import '../widgets/HomeItem2.dart';
@@ -59,38 +60,81 @@ class HomeScreen2 extends StatelessWidget {
                     },
                   ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed('medicaments-screen');
+                    },
                     child: HomeItem2(
                       icon: Icon(
                         Icons.local_hospital,
                         color: Colors.white,
                       ),
-                      head: 'Covid Test',
-                      trail: 'check if you have Covid-19',
+                      head: 'Treatment prototcol',
+                      trail: 'medicaments and \n its times',
                       color: greyColor,
                     ),
                   ),
-                  HomeItem2(
-                    icon: Icon(
-                      Icons.local_hospital,
-                      color: Colors.white,
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('developer');
+                    },
+                    child: HomeItem2(
+                      icon: Icon(
+                        Icons.local_hospital,
+                        color: Colors.white,
+                      ),
+                      head: 'Tests\n results',
+                      trail: 'medical tests results',
+                      color: greyColor,
                     ),
-                    head: 'Covid Test',
-                    trail: 'check if you have Covid-19',
-                    color: greyColor,
                   ),
-                  HomeItem2(
-                    icon: Icon(
-                      Icons.local_hospital,
-                      color: Colors.white,
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('get-hospital-screen');
+                    },
+                    child: HomeItem2(
+                      icon: Icon(
+                        Icons.local_hospital,
+                        color: Colors.white,
+                      ),
+                      head: 'Status',
+                      trail: 'measurements and tests during quarantine',
+                      color: greyColor,
                     ),
-                    head: 'Covid Test',
-                    trail: 'check if you have Covid-19',
-                    color: greyColor,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed('awareness-screen');
+                    },
+                    child: HomeItem2(
+                      icon: Icon(
+                        Icons.local_hospital,
+                        color: Colors.white,
+                      ),
+                      head: 'Awareness',
+                      trail:
+                          'Information about Covid-19 and how to interact with patients',
+                      color: greyColor,
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      await Provider.of<AwarenessProvider>(context,
+                              listen: false)
+                          .fetchAwarnesses();
+                    },
+                    child: HomeItem2(
+                      icon: Icon(
+                        Icons.local_hospital,
+                        color: Colors.white,
+                      ),
+                      head: 'First Aids',
+                      trail: 'First Aids information',
+                      color: greyColor,
+                    ),
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
         // bottomNavigationBar: Row(),
